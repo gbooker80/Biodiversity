@@ -1,6 +1,7 @@
 # flask dependencies
 from flask import Flask, jsonify, render_template
 
+
 #  Flask set up
 app = Flask(__name__)
 
