@@ -1,9 +1,7 @@
-// create dropdown from Flask API
+// Create dropdown from API
 d3.json("/names", function(error, response) {
 
     if (error) return console.warn(error);
-
-    // console.log(response);
 
     var $dropDown = document.getElementById("selDataset")
 
@@ -15,25 +13,22 @@ d3.json("/names", function(error, response) {
     }
 });
 
-// set intial values and graphs on the page
+// Set intial values and graphs
 var defaultSample = "BB_940"
 
 function init(sample){
-    // sample metadata panel
     d3.json("/metadata/" + sample, function(error, response){
         if (error) return console.warn(error);
 
-        // get list of keys from response
+        // Get list of keys
         var responseKeys = Object.keys(response);
 
-        // identify correct div
+        // Identify correct div
         var $sampleInfoPanel = document.querySelector("#sample-metadata");
        
-        // reset HTML to be nothing
+        // Reset HTML
         $sampleInfoPanel.innerHTML = null;
 
-        // loop through response keys and create a P element for each including
-        // response key and value
         for (var i=0; i<responseKeys.length; i++){
             var $dataPoint = document.createElement('p');
             $dataPoint.innerHTML = responseKeys[i] + ": " + response[responseKeys[i]];
@@ -42,15 +37,14 @@ function init(sample){
 
     });
 
-    // pie chart
-    //  get response for default sample
+    // Pie chart
     d3.json("/samples/" + sample, function(error, sampleResponse){
 
         if (error) return console.warn(error);
         console.log(sampleResponse)
         
-        // parse repsonse data and take sice of first ten
-        // data returnes sorted from schalchemy/flask
+        // Parse repsonse data and take slice of first ten
+        // Data returns sorted 
         resLabels = sampleResponse[0]["otu_ids"].slice(0,10)
         resValues = sampleResponse[1]["sample_values"].slice(0,10)
 
@@ -62,10 +56,8 @@ function init(sample){
                 resValues[i] = resValues.slice(0,i)
             }
         }
-        // console.log(resLabels)
-        // console.log(resValues)
 
-        // get matching decriptions for the top ten bacteria and create a list
+        // Get decriptions for top ten bacteria and create a list
         d3.json("/otu_descriptions", function(error, response){
 
             if (error) return console.warn(error);
@@ -75,16 +67,15 @@ function init(sample){
             for (var i=0; i< resLabels.length; i++){
                 bacteriaNamesPie.push(response[resLabels[i]])
             }
-            // console.log(bacteriaNames)
             
-            //  list of names for Bubble Chart
+            //  Name list for Bubble Chart
             var bacteriaNamesBub = []
             for (var i =0; i<sampleResponse[0]["otu_ids"].length; i++){
                 bacteriaNamesBub.push(response[sampleResponse[0]["otu_ids"][i]])
             }
             console.log(bacteriaNamesBub)
 
-            // set up data for pie chart
+            // Data for pie chart
             var data = [{
             values: resValues,
             labels: resLabels,
@@ -93,10 +84,10 @@ function init(sample){
             type: 'pie'
             }];
 
-        //   set up layout for plot
+        //   Plot layout
 
           var layout = {
-                    // width: 675,
+
                     margin: 
                     {
                         top: 10,
@@ -107,14 +98,10 @@ function init(sample){
                     height: 500,
                     title: "Top Sample Counts for " + sample
                   };
-        // plot defauly value
+        // Default value
           Plotly.newPlot('piePlot', data, layout);
 
-        console.log(sampleResponse);
-        //    bubble plot 
-
-        
-        
+        console.log(sampleResponse);   
         
         var trace1 = {
             x: sampleResponse[0]["otu_ids"],
@@ -136,7 +123,6 @@ function init(sample){
             hovermode: 'closest',
             showlegend: false,
             height: 600,
-            // width: 1200
             margin: 
                 {
                     top: 10,
@@ -183,7 +169,6 @@ function init(sample){
             marker: {size: 15, color:'850000'},
             showlegend: false,
             name: 'Number of Washes',
-            // text: washResponse,
             hoverinfo: 'name'
         },
         { values: [50/5, 50/5, 50/5, 50/5, 50/5, 50],
@@ -214,7 +199,6 @@ function init(sample){
             }],
         title: "<b>Belly Button Washing Frequency</b> <br> Washes per Week",
         height: 500,
-        // width: 600,
         margin: {
             top: 50,
             bottom: 10,
@@ -230,10 +214,8 @@ function init(sample){
         Plotly.newPlot('meter', data, layout);
             })
 };
-// end init
 
-
-// update pie chart function
+// Pie chart function update
 function updatePie(newValues, newLabels, newNames, sample_name){
     Plotly.restyle("piePlot", "values", [newValues])
     Plotly.restyle("piePlot", "labels", [newLabels])
