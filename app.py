@@ -1,17 +1,11 @@
-# flask dependencies
 from flask import Flask, jsonify, render_template
 
-
-#  Flask set up
 app = Flask(__name__)
 
-# Database set up and connection
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, desc  #what else here???
-
-#import custom functions
+from sqlalchemy import create_engine, desc  
 from bbd import return_sample_names
 
 engine = create_engine("sqlite:///DataSets/belly_button_biodiversity.sqlite")
@@ -23,7 +17,7 @@ Otu = Base.classes.otu
 Samples = Base.classes.samples
 Samples_metadata = Base.classes.samples_metadata
 
-#create session 
+#Initiate session 
 session = Session(engine)
 
 @app.route("/")
